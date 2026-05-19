@@ -1,0 +1,40 @@
+---
+- name: Ensure Docker Swarm is active on the target host
+  ansible.builtin.command: docker info --format '{{ "{{" }}.Swarm.LocalNodeState{{ "}}" }}'
+  register: _swarm_state
+  changed_when: false
+  failed_when: _swarm_state.stdout | trim != "active"
+
+- name: Ensure deploy directory exists
+  ansible.builtin.file:
+    path: "{{ portainer_vars.deploy_dir | default('/opt/docker-compose/portainer') }}"
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Render docker-compose.yml for portainer stack
+  ansible.builtin.template:
+    src: docker-compose.yml.j2
+    dest: "{{ portainer_vars.deploy_dir | default('/opt/docker-compose/portainer') }}/docker-compose.yml"
+    owner: root
+    group: root
+    mode: "0644"
+  register: _compose_file
+
+- name: Deploy portainer stack into the swarm
+  ansible.builtin.command:
+    cmd: >-
+      docker stack deploy
+      --compose-file {{ portainer_vars.deploy_dir | default('/opt/docker-compose/portainer') }}/docker-compose.yml
+      --with-registry-auth
+      {{ portainer_vars.stack_name | default('portainer') }}
+  register: _stack_deploy
+  changed_when: _compose_file is changed
+
+- name: Wait for Portainer UI (HTTPS) to accept connections
+  ansible.builtin.wait_for:
+    host: "{{ ansible_default_ipv4.address | default('127.0.0.1') }}"
+    port: "{{ portainer_vars.https_port | default(9443) }}"
+    timeout: 120
+    state: started

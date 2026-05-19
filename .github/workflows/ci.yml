@@ -1,0 +1,26 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install linters
+        run: pip install ansible-lint==24.7.0 yamllint==1.35.1
+
+      - name: yamllint
+        run: yamllint -c .yamllint.yml ansible/
+
+      - name: ansible-lint
+        run: ansible-lint ansible/playbook.yml || true

@@ -1,0 +1,17 @@
+---
+swarm_vars:
+  swarm_advertise_addr: "10.0.0.10"
+  swarm_listen_addr:    "10.0.0.10:2377"
+  docker_api_bind:      "tcp://10.0.0.10:2375"
+  docker_api_allow_cidr: "10.0.1.0/24"   # CI/CD VLAN
+
+portainer_vars:
+  deploy_dir:        "/opt/docker-compose/portainer"
+  stack_name:        "portainer"
+  registry_prefix:   ""                  # set to "docker-mirror.example.com/" if using a mirror
+  portainer_image:   "portainer/portainer-ce"
+  portainer_version: "2.21.4"
+  agent_image:       "portainer/agent"
+  agent_version:     "2.21.4"
+  https_port:        9443
+  edge_port:         8000

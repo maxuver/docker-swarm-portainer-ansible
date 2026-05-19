@@ -1,0 +1,28 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# Editors
+.idea/
+.vscode/
+*.swp
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+
+# Ansible
+*.retry
+.ansible/
+
+# Helm
+charts/*.tgz
+
+# Local secrets
+*.env
+*.local.yml
+kubeconfig*
+.secrets/

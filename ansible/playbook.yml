@@ -1,0 +1,16 @@
+---
+- name: Provision single-node Docker Swarm + Portainer
+  hosts: swarm-stand
+  become: true
+  roles:
+    # NOTE: base roles below are intentionally commented out.
+    #   The swarm and docker are already provisioned and working — running
+    #   the base roles again risks restarting the docker daemon or apt-upgrading
+    #   the host during business hours. Uncomment them only when provisioning
+    #   a brand-new stand from scratch.
+    # - sysctl
+    # - apt_sources
+    # - swapoff
+    # - update_and_upgrade
+    # - docker_swarm
+    - portainer
